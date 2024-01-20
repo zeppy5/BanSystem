@@ -1,0 +1,9 @@
+name: BanSystem
+version: '${project.version}'
+main: de.zeppy5.bansystem.BanSystem
+api-version: '1.20'
+commands:
+  ban:
+  unban:
+  removeban:
+  listbans:
