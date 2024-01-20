@@ -104,7 +104,7 @@ public class BanManager {
 
     public ResultSet getBans(String uuid) {
         try {
-            PreparedStatement st = BanSystem.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM bans WHERE UUID = ? AND NOT STATUS = 3");
+            PreparedStatement st = BanSystem.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM bans WHERE UUID = ? AND NOT STATUS = 3", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             st.setString(1, uuid);
 
             ResultSet rs = st.executeQuery();
