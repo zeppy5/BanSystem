@@ -1,0 +1,8 @@
+# Enter your database details here
+# If the config isn't correct the plugin won't start!
+
+host: 'localhost'
+database: 'ban'
+user: 'root'
+password: ''
+port: 3306

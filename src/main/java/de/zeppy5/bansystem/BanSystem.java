@@ -8,6 +8,7 @@ import de.zeppy5.bansystem.commands.RemoveBanCommand;
 import de.zeppy5.bansystem.commands.UnbanCommand;
 import de.zeppy5.bansystem.util.MySQL;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -24,7 +25,17 @@ public final class BanSystem extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        mySQL = new MySQL("localhost", "ban", "root", "", 3306);
+        saveDefaultConfig();
+
+        FileConfiguration config = getConfig();
+
+        String host = config.getString("host");
+        String database = config.getString("database");
+        String user = config.getString("user");
+        String password = config.getString("password");
+        int port = config.getInt("port");
+
+        mySQL = new MySQL(host, database, user, password, port);
 
         banManager = new BanManager();
 

@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListBansCommand implements CommandExecutor, TabCompleter {
+
+    private final int itemsPerPage = 10;
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -67,13 +70,13 @@ public class ListBansCommand implements CommandExecutor, TabCompleter {
                 page = Integer.parseInt(args[1]) - 1;
             }
 
-            if ((page + 1) > (int) Math.ceil((double)size / 10)) {
-                sender.sendMessage(ChatColor.RED + "Invalid page number, there are " + ChatColor.BLUE + (int) Math.ceil((double)size / 10) + ChatColor.RED + " pages");
+            if ((page + 1) > (int) Math.ceil((double)size / itemsPerPage)) {
+                sender.sendMessage(ChatColor.RED + "Invalid page number, there are " + ChatColor.BLUE + (int) Math.ceil((double)size / itemsPerPage) + ChatColor.RED + " pages");
                 return false;
             }
 
             if (page < 0) {
-                sender.sendMessage(ChatColor.RED + "Invalid page number, there are " + ChatColor.BLUE + (int) Math.ceil((double)size / 10) + ChatColor.RED + " pages");
+                sender.sendMessage(ChatColor.RED + "Invalid page number, there are " + ChatColor.BLUE + (int) Math.ceil((double)size / itemsPerPage) + ChatColor.RED + " pages");
                 return false;
             }
 
@@ -123,28 +126,21 @@ public class ListBansCommand implements CommandExecutor, TabCompleter {
     private void printBans(CommandSender sender, ResultSet rs, int size, int page) throws SQLException {
 
         sender.sendMessage(ChatColor.YELLOW + "--------------------------------------------------");
-        sender.sendMessage(ChatColor.GREEN + "Page " + (page + 1) + " / " + (int) Math.ceil((double)size / 10));
+        sender.sendMessage(ChatColor.GREEN + "Page " + (page + 1) + " / " + (int) Math.ceil((double)size / itemsPerPage));
 
         rs.beforeFirst();
 
-        for (int i = 0; i < (page * 10); i++) {
+        for (int i = 0; i < (page * itemsPerPage); i++) {
             rs.next();
-            System.out.println("next");
         }
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-        int s = 0;
-
-        if ((size - (page * 10) ) > 10) {
-            s = 10;
-        } else {
-            s = (size - (page * 10));
-        }
+        int s = Math.min((size - (page * itemsPerPage)), itemsPerPage);
 
         for (int i = 0; i < s; i++) {
             rs.next();
-            sender.sendMessage("*****");
+            sender.sendMessage(ChatColor.DARK_PURPLE + "⌈¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯⌉");
 
             String id = rs.getString("ID");
             String reason = rs.getString("REASON");
@@ -162,14 +158,14 @@ public class ListBansCommand implements CommandExecutor, TabCompleter {
 
             String status = BanSystem.getInstance().getBanManager().getStatusFromID(rs.getInt("STATUS"));
 
-
-            sender.sendMessage(ChatColor.AQUA + "Ban-id: " + id
-                    + "\nReason: " + reason
-                    + "\nBan Date: " + bannedOn
-                    + "\nExpire Date: " + date
-                    + "\nBanned by: " + bannedBy
-                    + "\nStatus: " + status);
-            sender.sendMessage("*****");
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&'
+                    , "&bBan-id: &a" + id
+                    + "&b\nReason: &a" + reason
+                    + "&b\nBan Date: &a" + bannedOn
+                    + "&b\nExpire Date: &a" + date
+                    + "&b\nBanned by: &a" + bannedBy
+                    + "&b\nStatus: &a" + status));
+            sender.sendMessage(ChatColor.DARK_PURPLE + "⌊_________________________⌋");
         }
         sender.sendMessage(ChatColor.YELLOW + "--------------------------------------------------");
     }

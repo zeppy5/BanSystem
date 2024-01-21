@@ -49,9 +49,12 @@ public class BanListener implements Listener {
             }
 
             String reason = rs.getString("REASON");
+
+            String banID = rs.getString("ID");
             return ChatColor.RED + "You are banned from this server!\n"
                     + ChatColor.BOLD + "Reason: " + ChatColor.BLUE + reason
-                    + ChatColor.RESET + ChatColor.RED + "\nExpires: " + ChatColor.ITALIC + ChatColor.BLUE + date;
+                    + ChatColor.RESET + ChatColor.RED + "\nExpires: " + ChatColor.ITALIC + ChatColor.BLUE + date
+                    + ChatColor.RESET + ChatColor.GRAY + "\nBan-ID: " + ChatColor.ITALIC + banID;
         } catch (SQLException e) {
             e.printStackTrace();
             return "";

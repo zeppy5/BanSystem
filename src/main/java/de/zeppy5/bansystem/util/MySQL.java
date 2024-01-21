@@ -39,7 +39,7 @@ public class MySQL {
             connection = DriverManager.getConnection(url, USER, PASSWORD);
             Bukkit.getLogger().log(Level.INFO, "[MySQL] Connected");
         } catch (SQLException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "[MySQL] Connection failed: " + e.getMessage());
+            Bukkit.getLogger().log(Level.SEVERE, "[MySQL] Connection failed: " + e.getMessage() + " Is the Config configured correctly?");
             e.printStackTrace();
         }
     }
