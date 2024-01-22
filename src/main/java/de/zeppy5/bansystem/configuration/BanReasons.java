@@ -5,7 +5,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +31,6 @@ public class BanReasons {
         }
     }
 
-    public void save() {
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public List<Map<?, ?>> getList() {
         return config.getMapList("reasons");
     }
@@ -52,7 +43,4 @@ public class BanReasons {
         return (String) Objects.requireNonNull(getList().stream().filter(map -> map.get("id").equals(id)).findFirst().orElse(new HashMap<>())).get("length");
     }
 
-    public FileConfiguration getConfig() {
-        return config;
-    }
 }

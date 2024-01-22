@@ -124,14 +124,15 @@ public class BanCommand implements CommandExecutor, TabCompleter {
                 long length;
 
                 try {
+                    long parseLong = Long.parseLong(lengthString.substring(0, lengthString.length() - 1));
                     if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("s")) {
-                        length = Long.parseLong(lengthString.substring(0, lengthString.length() - 1));
+                        length = parseLong;
                     } else if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("m")) {
-                        length = TimeUnit.SECONDS.convert(Long.parseLong(lengthString.substring(0, lengthString.length() - 1)), TimeUnit.MINUTES);
+                        length = TimeUnit.SECONDS.convert(parseLong, TimeUnit.MINUTES);
                     } else if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("h")) {
-                        length = TimeUnit.SECONDS.convert(Long.parseLong(lengthString.substring(0, lengthString.length() - 1)), TimeUnit.HOURS);
+                        length = TimeUnit.SECONDS.convert(parseLong, TimeUnit.HOURS);
                     } else if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("d")) {
-                        length = TimeUnit.SECONDS.convert(Long.parseLong(lengthString.substring(0, lengthString.length() - 1)), TimeUnit.DAYS);
+                        length = TimeUnit.SECONDS.convert(parseLong, TimeUnit.DAYS);
                     } else if (lengthString.equalsIgnoreCase("-1")) {
                         length = -1;
                     } else {

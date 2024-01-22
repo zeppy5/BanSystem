@@ -9,7 +9,4 @@ public class Profile {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
 }
