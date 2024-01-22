@@ -41,6 +41,7 @@ public class MySQL {
         } catch (SQLException e) {
             Bukkit.getLogger().log(Level.SEVERE, "[MySQL] Connection failed: " + e.getMessage() + " Is the Config configured correctly?");
             e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 
