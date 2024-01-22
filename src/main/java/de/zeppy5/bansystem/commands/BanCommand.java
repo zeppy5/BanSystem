@@ -90,7 +90,7 @@ public class BanCommand implements CommandExecutor, TabCompleter {
                 BanSystem.getInstance().getBanManager().banPlayer(uuid, length, reason, bannedBy);
 
                 if (player != null) {
-                    player.kickPlayer(BanSystem.getInstance().getBanManager().reason(reason));
+                    Bukkit.getScheduler().runTask(BanSystem.getInstance(), () -> player.kickPlayer(BanSystem.getInstance().getBanManager().reason(reason)));
                 }
 
                 sender.sendMessage(ChatColor.GREEN + "Banned player: " + args[0] + " (UUID: " + uuid + ")"
@@ -147,7 +147,7 @@ public class BanCommand implements CommandExecutor, TabCompleter {
                 BanSystem.getInstance().getBanManager().banPlayer(uuid, length, reason, bannedBy);
 
                 if (player != null) {
-                    player.kickPlayer(BanSystem.getInstance().getBanManager().reason(reason));
+                    Bukkit.getScheduler().runTask(BanSystem.getInstance(), () -> player.kickPlayer(BanSystem.getInstance().getBanManager().reason(reason)));
                 }
 
                 sender.sendMessage(ChatColor.GREEN + "Banned player: " + args[0] + " (UUID: " + uuid + ")"

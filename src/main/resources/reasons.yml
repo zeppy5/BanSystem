@@ -2,11 +2,23 @@
 
 reasons:
   - id: 1
-    reason: one
-    length: 1s
+    reason: 'Cheating through the use of a client modification'
+    length: 7d
   - id: 2
-    reason: two
-    length: 2s
+    reason: 'Cheating through the use of a bug or a lag'
+    length: 3d
   - id: 3
-    reason: three
-    length: 3s
+    reason: 'Harsh insults'
+    length: 5h
+  - id: 4
+    reason: 'Suspicious account activity'
+    length: -1
+  - id: 5
+    reason: 'Extreme Behavior'
+    length: 7d
+  - id: 6
+    reason: 'Harassment of server staff'
+    length: 1d
+  - id: 99
+    reason: 'Banned by an Administrator'
+    length: -1

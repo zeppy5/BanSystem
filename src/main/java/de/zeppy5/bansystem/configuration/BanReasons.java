@@ -36,11 +36,11 @@ public class BanReasons {
     }
 
     public String getReason(int id) {
-        return (String) Objects.requireNonNull(getList().stream().filter(map -> map.get("id").equals(id)).findFirst().orElse(new HashMap<>())).get("reason");
+        return String.valueOf(Objects.requireNonNull(getList().stream().filter(map -> map.get("id").equals(id)).findFirst().orElse(new HashMap<>())).get("reason"));
     }
 
     public String getLength(int id) {
-        return (String) Objects.requireNonNull(getList().stream().filter(map -> map.get("id").equals(id)).findFirst().orElse(new HashMap<>())).get("length");
+        return String.valueOf(Objects.requireNonNull(getList().stream().filter(map -> map.get("id").equals(id)).findFirst().orElse(new HashMap<>())).get("length"));
     }
 
 }

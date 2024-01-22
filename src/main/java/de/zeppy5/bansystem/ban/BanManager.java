@@ -122,7 +122,7 @@ public class BanManager {
     }
 
     public String reason(String reason) {
-        return ChatColor.RED + "You have been banned from this server!\n"
+        return ChatColor.RED + "You are banned from this server!\n"
                 + ChatColor.BOLD + "Reason: " + ChatColor.BLUE + reason;
     }
 
