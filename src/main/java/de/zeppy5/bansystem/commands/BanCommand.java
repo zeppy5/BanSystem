@@ -197,7 +197,7 @@ public class BanCommand implements CommandExecutor, TabCompleter {
         reasonList.forEach(map -> {
             String id = String.valueOf(map.get("id"));
             String reason = String.valueOf(map.get("reason"));
-            String length = String.valueOf(map.get("length"));
+            String length = String.valueOf(map.get("length")).equals("-1") ? "PERMANENT" : String.valueOf(map.get("length"));
 
             commandSender.sendMessage(ChatColor.RED + "ID: " + ChatColor.DARK_RED + id
                     + ChatColor.RED + " Length: " + ChatColor.DARK_RED + length
