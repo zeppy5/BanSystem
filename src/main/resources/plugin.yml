@@ -1,4 +1,5 @@
 name: BanSystem
+author: zeppy5
 version: '${project.version}'
 main: de.zeppy5.bansystem.BanSystem
 api-version: '1.20'
