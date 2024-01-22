@@ -14,19 +14,22 @@ public class RemoveBanCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (!sender.hasPermission("ban.remove")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to execute this command!");
-            return false;
-        }
+        new Thread(() -> {
+            if (!sender.hasPermission("ban.remove")) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to execute this command!");
+                return;
+            }
 
-        if (args.length != 1) {
-            syntax(sender);
-            return false;
-        }
+            if (args.length != 1) {
+                syntax(sender);
+                return;
+            }
 
-        BanSystem.getInstance().getBanManager().removeBan(args[0]);
+            BanSystem.getInstance().getBanManager().removeBan(args[0]);
 
-        sender.sendMessage(ChatColor.GREEN + "Tried to remove ban with ID: " + ChatColor.BLUE + args[0]);
+            sender.sendMessage(ChatColor.GREEN + "Tried to remove ban with ID: " + ChatColor.BLUE + args[0]);
+        }).start();
+
         return false;
     }
 

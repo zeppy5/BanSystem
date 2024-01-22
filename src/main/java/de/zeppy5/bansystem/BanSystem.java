@@ -2,15 +2,14 @@ package de.zeppy5.bansystem;
 
 import de.zeppy5.bansystem.ban.BanListener;
 import de.zeppy5.bansystem.ban.BanManager;
-import de.zeppy5.bansystem.commands.BanCommand;
-import de.zeppy5.bansystem.commands.ListBansCommand;
-import de.zeppy5.bansystem.commands.RemoveBanCommand;
-import de.zeppy5.bansystem.commands.UnbanCommand;
+import de.zeppy5.bansystem.commands.*;
+import de.zeppy5.bansystem.configuration.BanReasons;
 import de.zeppy5.bansystem.util.MySQL;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public final class BanSystem extends JavaPlugin {
@@ -21,9 +20,13 @@ public final class BanSystem extends JavaPlugin {
 
     private BanManager banManager;
 
+    private BanReasons banReasons;
+
     @Override
     public void onEnable() {
         instance = this;
+
+        banReasons = new BanReasons(this, "reasons.yml");
 
         saveDefaultConfig();
 
@@ -63,5 +66,9 @@ public final class BanSystem extends JavaPlugin {
 
     public BanManager getBanManager() {
         return banManager;
+    }
+
+    public BanReasons getBanReasons() {
+        return banReasons;
     }
 }

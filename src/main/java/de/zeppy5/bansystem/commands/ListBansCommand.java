@@ -21,72 +21,79 @@ import java.util.List;
 
 public class ListBansCommand implements CommandExecutor, TabCompleter {
 
-    private final int itemsPerPage = 10;
+    private final int itemsPerPage = 5;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
 
-        if (!sender.hasPermission("ban.unban")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to execute this command!");
-            return false;
-        }
-
-        if (args.length > 2) {
-            syntax(sender);
-            return false;
-        }
-
-        Player player = Bukkit.getPlayer(args[0]);
-        String uuid;
-        if (player != null) {
-            uuid = String.valueOf(player.getUniqueId());
-        } else {
-            uuid = MojangAPI.getUUID(args[0]);
-        }
-
-        if (uuid == null) {
-            sender.sendMessage(ChatColor.RED + "Player does not exist!");
-            return false;
-        }
-
-        try {
-            ResultSet rs = BanSystem.getInstance().getBanManager().getBans(uuid);
-            int size = 0;
-            if (rs != null)
-            {
-                rs.last();
-                size = rs.getRow();
-                rs.beforeFirst();
+        new Thread(() -> {
+            if (!sender.hasPermission("ban.unban")) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to execute this command!");
+                return;
             }
 
-            if (size == 0) {
-                sender.sendMessage(ChatColor.GREEN + "Player has no bans");
-                return false;
+            if (args.length > 2) {
+                syntax(sender);
+                return;
             }
 
-            int page = 0;
-            if (args.length == 2) {
-                page = Integer.parseInt(args[1]) - 1;
+            Player player = Bukkit.getPlayer(args[0]);
+            String uuid;
+            if (player != null) {
+                uuid = String.valueOf(player.getUniqueId());
+            } else {
+                uuid = MojangAPI.getUUID(args[0]);
             }
 
-            if ((page + 1) > (int) Math.ceil((double)size / itemsPerPage)) {
-                sender.sendMessage(ChatColor.RED + "Invalid page number, there are " + ChatColor.BLUE + (int) Math.ceil((double)size / itemsPerPage) + ChatColor.RED + " pages");
-                return false;
+            if (uuid == null) {
+                sender.sendMessage(ChatColor.RED + "Player does not exist!");
+                return;
             }
 
-            if (page < 0) {
-                sender.sendMessage(ChatColor.RED + "Invalid page number, there are " + ChatColor.BLUE + (int) Math.ceil((double)size / itemsPerPage) + ChatColor.RED + " pages");
-                return false;
+            try {
+                ResultSet rs = BanSystem.getInstance().getBanManager().getBans(uuid);
+                int size = 0;
+                if (rs != null)
+                {
+                    rs.last();
+                    size = rs.getRow();
+                    rs.beforeFirst();
+                }
+
+                if (size == 0) {
+                    sender.sendMessage(ChatColor.GREEN + "Player has no bans");
+                    return;
+                }
+
+                int page = 0;
+                if (args.length == 2) {
+                    try {
+                        page = Integer.parseInt(args[1]) - 1;
+                    } catch (NumberFormatException e) {
+                        syntax(sender);
+                        return;
+                    }
+                }
+
+                if ((page + 1) > (int) Math.ceil((double)size / itemsPerPage)) {
+                    sender.sendMessage(ChatColor.RED + "Invalid page number, there are " + ChatColor.BLUE + (int) Math.ceil((double)size / itemsPerPage) + ChatColor.RED + " pages");
+                    return;
+                }
+
+                if (page < 0) {
+                    sender.sendMessage(ChatColor.RED + "Invalid page number, there are " + ChatColor.BLUE + (int) Math.ceil((double)size / itemsPerPage) + ChatColor.RED + " pages");
+                    return;
+                }
+
+                printBans(sender, rs, size, page);
+
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                sender.sendMessage(ChatColor.RED + "An internal Error occurred");
             }
-
-            printBans(sender, rs, size, page);
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            sender.sendMessage(ChatColor.RED + "An internal Error occurred");
-        }
+        }).start();
 
         return false;
     }
@@ -159,7 +166,7 @@ public class ListBansCommand implements CommandExecutor, TabCompleter {
             String status = BanSystem.getInstance().getBanManager().getStatusFromID(rs.getInt("STATUS"));
 
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&'
-                    , "&bBan-id: &a" + id
+                    , "&bBan-ID: &a" + id
                     + "&b\nReason: &a" + reason
                     + "&b\nBan Date: &a" + bannedOn
                     + "&b\nExpire Date: &a" + date

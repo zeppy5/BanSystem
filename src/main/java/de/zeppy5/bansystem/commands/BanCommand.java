@@ -12,81 +12,151 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class BanCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (!sender.hasPermission("ban.ban")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to execute this command!");
-            return false;
-        }
+        new Thread(() -> {
+            if (!sender.hasPermission("ban.ban")) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to execute this command!");
+                return;
+            }
 
-        if (args.length < 3) {
-            syntax(sender);
-            return false;
-        }
+            if (args.length < 2) {
+                syntax(sender);
+                return;
+            }
 
-        Player player = Bukkit.getPlayer(args[0]);
-        String uuid;
-        if (player != null) {
-            uuid = String.valueOf(player.getUniqueId());
-        } else {
-            uuid = MojangAPI.getUUID(args[0]);
-        }
+            Player player = Bukkit.getPlayer(args[0]);
+            String uuid;
+            if (player != null) {
+                uuid = String.valueOf(player.getUniqueId());
+            } else {
+                uuid = MojangAPI.getUUID(args[0]);
+            }
 
-        if (uuid == null) {
-            sender.sendMessage(ChatColor.RED + "Player does not exist!");
-            return false;
-        }
+            if (uuid == null) {
+                sender.sendMessage(ChatColor.RED + "Player does not exist!");
+                return;
+            }
 
-        // String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length - 1));
+            String bannedBy;
+            if (sender instanceof Player) {
+                bannedBy = String.valueOf(((Player) sender).getUniqueId());
+            } else {
+                bannedBy = sender.getName();
+            }
 
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < args.length - 2; i++) {
-            stringBuilder.append(args[i+2]);
-            stringBuilder.append(' ');
-        }
+            if (args.length > 3) {
 
-        String reason = stringBuilder.toString();
+                StringBuilder stringBuilder = new StringBuilder();
+                for (int i = 0; i < args.length - 2; i++) {
+                    stringBuilder.append(args[i+2]);
+                    stringBuilder.append(' ');
+                }
 
-        if (reason.length() > 200) {
-            sender.sendMessage(ChatColor.RED + "Reason can only be 200 characters long!");
-            return false;
-        }
+                String reason = stringBuilder.toString();
 
-        String bannedBy;
-        if (sender instanceof Player) {
-            bannedBy = String.valueOf(((Player) sender).getUniqueId());
-        } else {
-            bannedBy = sender.getName();
-        }
+                if (reason.length() > 200) {
+                    sender.sendMessage(ChatColor.RED + "Reason can only be 200 characters long!");
+                    return;
+                }
 
-        long length;
+                long length;
 
-        if (args[1].substring(args[1].length() - 1).equalsIgnoreCase("s")) {
-            length = Long.parseLong(args[1].substring(0, args[1].length() - 1));
-        } else if (args[1].substring(args[1].length() - 1).equalsIgnoreCase("m")) {
-            length = TimeUnit.SECONDS.convert(Long.parseLong(args[1].substring(0, args[1].length() - 1)), TimeUnit.MINUTES);
-        } else if (args[1].substring(args[1].length() - 1).equalsIgnoreCase("h")) {
-            length = TimeUnit.SECONDS.convert(Long.parseLong(args[1].substring(0, args[1].length() - 1)), TimeUnit.HOURS);
-        } else if (args[1].substring(args[1].length() - 1).equalsIgnoreCase("d")) {
-            length = TimeUnit.SECONDS.convert(Long.parseLong(args[1].substring(0, args[1].length() - 1)), TimeUnit.DAYS);
-        } else if (args[1].equalsIgnoreCase("-1")) {
-            length = -1;
-        } else {
-            syntax(sender);
-            return false;
-        }
+                try {
+                    if (args[1].substring(args[1].length() - 1).equalsIgnoreCase("s")) {
+                        length = Long.parseLong(args[1].substring(0, args[1].length() - 1));
+                    } else if (args[1].substring(args[1].length() - 1).equalsIgnoreCase("m")) {
+                        length = TimeUnit.SECONDS.convert(Long.parseLong(args[1].substring(0, args[1].length() - 1)), TimeUnit.MINUTES);
+                    } else if (args[1].substring(args[1].length() - 1).equalsIgnoreCase("h")) {
+                        length = TimeUnit.SECONDS.convert(Long.parseLong(args[1].substring(0, args[1].length() - 1)), TimeUnit.HOURS);
+                    } else if (args[1].substring(args[1].length() - 1).equalsIgnoreCase("d")) {
+                        length = TimeUnit.SECONDS.convert(Long.parseLong(args[1].substring(0, args[1].length() - 1)), TimeUnit.DAYS);
+                    } else if (args[1].equalsIgnoreCase("-1")) {
+                        length = -1;
+                    } else {
+                        syntax(sender);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    syntax(sender);
+                    return;
+                }
 
-        BanSystem.getInstance().getBanManager().banPlayer(uuid, length, reason, bannedBy);
+                BanSystem.getInstance().getBanManager().banPlayer(uuid, length, reason, bannedBy);
 
-        if (player != null) {
-            player.kickPlayer(BanSystem.getInstance().getBanManager().reason(reason));
-        }
+                if (player != null) {
+                    player.kickPlayer(BanSystem.getInstance().getBanManager().reason(reason));
+                }
 
-        sender.sendMessage(ChatColor.GREEN + "Banned player: " + args[0] + " (UUID: " + uuid + ")");
+                sender.sendMessage(ChatColor.GREEN + "Banned player: " + args[0] + " (UUID: " + uuid + ")"
+                        + " for " + (args[1].equals("-1") ? "PERMANENT" : args[1]) + ". Reason: " + reason);
+
+            } else if (args.length == 2) {
+
+                int id;
+
+                try {
+                    id = Integer.parseInt(args[1]);
+                } catch (NumberFormatException e) {
+                    syntax(sender);
+                    return;
+                }
+
+                String reason = BanSystem.getInstance().getBanReasons().getReason(id);
+                String lengthString = BanSystem.getInstance().getBanReasons().getLength(id);
+
+                if (reason == null || lengthString == null) {
+                    syntax(sender);
+                    return;
+                }
+
+
+                if (reason.length() > 200) {
+                    sender.sendMessage(ChatColor.RED + "Reason can only be 200 characters long!");
+                    return;
+                }
+
+                long length;
+
+                try {
+                    if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("s")) {
+                        length = Long.parseLong(lengthString.substring(0, lengthString.length() - 1));
+                    } else if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("m")) {
+                        length = TimeUnit.SECONDS.convert(Long.parseLong(lengthString.substring(0, lengthString.length() - 1)), TimeUnit.MINUTES);
+                    } else if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("h")) {
+                        length = TimeUnit.SECONDS.convert(Long.parseLong(lengthString.substring(0, lengthString.length() - 1)), TimeUnit.HOURS);
+                    } else if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("d")) {
+                        length = TimeUnit.SECONDS.convert(Long.parseLong(lengthString.substring(0, lengthString.length() - 1)), TimeUnit.DAYS);
+                    } else if (lengthString.equalsIgnoreCase("-1")) {
+                        length = -1;
+                    } else {
+                        syntax(sender);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    syntax(sender);
+                    return;
+                }
+
+                BanSystem.getInstance().getBanManager().banPlayer(uuid, length, reason, bannedBy);
+
+                if (player != null) {
+                    player.kickPlayer(BanSystem.getInstance().getBanManager().reason(reason));
+                }
+
+                sender.sendMessage(ChatColor.GREEN + "Banned player: " + args[0] + " (UUID: " + uuid + ")"
+                        + " for " + (lengthString.equals("-1") ? "PERMANENT" : lengthString) + ". Reason: " + reason);
+
+            } else {
+                syntax(sender);
+            }
+
+        }).start();
 
         return false;
     }
@@ -120,7 +190,22 @@ public class BanCommand implements CommandExecutor, TabCompleter {
     }
 
     private void syntax(CommandSender commandSender) {
-        commandSender.sendMessage(ChatColor.RED + "Usage: /ban <Player> <Duration> <Reason>");
+
+        List<Map<?, ?>> reasonList = BanSystem.getInstance().getBanReasons().getList();
+
+        reasonList.forEach(map -> {
+            String id = (String) map.get("id");
+            String reason = (String) map.get("reason");
+            String length = (String) map.get("length");
+
+            commandSender.sendMessage(ChatColor.RED + "ID: " + ChatColor.DARK_RED + id
+                    + ChatColor.RED + " Length: " + ChatColor.DARK_RED + length
+                    + ChatColor.RED + " Reason: " + ChatColor.DARK_RED + reason);
+        });
+
+        commandSender.sendMessage(ChatColor.RED + "Usage: ");
+        commandSender.sendMessage(ChatColor.DARK_RED + "/ban <Player> <Reason-ID>");
+        commandSender.sendMessage(ChatColor.DARK_RED + "/ban <Player> <Duration> <Reason>");
         commandSender.sendMessage(ChatColor.RED + "Duration:");
         commandSender.sendMessage(ChatColor.RED + "Use s for Seconds");
         commandSender.sendMessage(ChatColor.RED + "Use m for Minutes");

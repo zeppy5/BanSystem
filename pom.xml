@@ -6,7 +6,7 @@
 
     <groupId>de.zeppy5</groupId>
     <artifactId>BanSystem</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
 
     <name>BanSystem</name>

@@ -1,0 +1,12 @@
+# example comment
+
+reasons:
+  - id: 1
+    reason: one
+    length: 1s
+  - id: 2
+    reason: two
+    length: 2s
+  - id: 3
+    reason: three
+    length: 3s

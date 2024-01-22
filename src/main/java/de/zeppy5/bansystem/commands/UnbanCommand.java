@@ -17,26 +17,28 @@ public class UnbanCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (!sender.hasPermission("ban.unban")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to execute this command!");
-            return false;
-        }
+        new Thread(() -> {
+            if (!sender.hasPermission("ban.unban")) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to execute this command!");
+                return;
+            }
 
-        if (args.length != 1) {
-            syntax(sender);
-            return false;
-        }
+            if (args.length != 1) {
+                syntax(sender);
+                return;
+            }
 
-        String uuid = MojangAPI.getUUID(args[0]);
+            String uuid = MojangAPI.getUUID(args[0]);
 
-        if (uuid == null) {
-            sender.sendMessage(ChatColor.RED + "Player does not exist!");
-            return false;
-        }
+            if (uuid == null) {
+                sender.sendMessage(ChatColor.RED + "Player does not exist!");
+                return;
+            }
 
-        BanSystem.getInstance().getBanManager().unbanPlayer(uuid);
+            BanSystem.getInstance().getBanManager().unbanPlayer(uuid);
 
-        sender.sendMessage(ChatColor.GREEN + "Unbanned player: " + ChatColor.BLUE + args[0] + " (UUID: " + uuid + ")");
+            sender.sendMessage(ChatColor.GREEN + "Unbanned player: " + ChatColor.BLUE + args[0] + " (UUID: " + uuid + ")");
+        }).start();
 
         return false;
     }
