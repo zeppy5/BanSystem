@@ -1,4 +1,12 @@
-# example comment
+# Enter ban reasons here
+# Enter reasons as shown in the examples below
+# After configuring you will need to restart the server
+#
+# Use s for Seconds
+# Use m for Minutes
+# Use h for Hours
+# Use d for Days
+# Use -1 for Permanent
 
 reasons:
   - id: 1

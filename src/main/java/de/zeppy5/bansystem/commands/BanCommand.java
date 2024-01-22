@@ -50,7 +50,7 @@ public class BanCommand implements CommandExecutor, TabCompleter {
                 bannedBy = sender.getName();
             }
 
-            if (args.length > 3) {
+            if (args.length >= 3) {
 
                 StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < args.length - 2; i++) {
@@ -124,15 +124,14 @@ public class BanCommand implements CommandExecutor, TabCompleter {
                 long length;
 
                 try {
-                    long parseLong = Long.parseLong(lengthString.substring(0, lengthString.length() - 1));
                     if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("s")) {
-                        length = parseLong;
+                        length = Long.parseLong(lengthString.substring(0, lengthString.length() - 1));
                     } else if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("m")) {
-                        length = TimeUnit.SECONDS.convert(parseLong, TimeUnit.MINUTES);
+                        length = TimeUnit.SECONDS.convert(Long.parseLong(lengthString.substring(0, lengthString.length() - 1)), TimeUnit.MINUTES);
                     } else if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("h")) {
-                        length = TimeUnit.SECONDS.convert(parseLong, TimeUnit.HOURS);
+                        length = TimeUnit.SECONDS.convert(Long.parseLong(lengthString.substring(0, lengthString.length() - 1)), TimeUnit.HOURS);
                     } else if (lengthString.substring(lengthString.length() - 1).equalsIgnoreCase("d")) {
-                        length = TimeUnit.SECONDS.convert(parseLong, TimeUnit.DAYS);
+                        length = TimeUnit.SECONDS.convert(Long.parseLong(lengthString.substring(0, lengthString.length() - 1)), TimeUnit.DAYS);
                     } else if (lengthString.equalsIgnoreCase("-1")) {
                         length = -1;
                     } else {
