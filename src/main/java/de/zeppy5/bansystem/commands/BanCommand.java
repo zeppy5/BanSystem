@@ -31,15 +31,23 @@ public class BanCommand implements CommandExecutor, TabCompleter {
             }
 
             Player player = Bukkit.getPlayer(args[0]);
-            String uuid;
+            String uuid = null;
+
             if (player != null) {
                 uuid = String.valueOf(player.getUniqueId());
-            } else {
+            }
+
+            int n = 0;
+            while (uuid == null && n < 3) {
                 uuid = MojangAPI.getUUID(args[0]);
+                n++;
+                if (uuid == null) {
+                    sender.sendMessage(ChatColor.YELLOW + "Failed to fetch player info from Mojang API. Trying again");
+                }
             }
 
             if (uuid == null) {
-                sender.sendMessage(ChatColor.RED + "Player does not exist!");
+                sender.sendMessage(ChatColor.RED + "Failed to fetch player info from Mojang API three times. Giving up");
                 return;
             }
 
