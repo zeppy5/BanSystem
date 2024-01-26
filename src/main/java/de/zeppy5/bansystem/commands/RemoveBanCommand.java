@@ -20,7 +20,7 @@ public class RemoveBanCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            if (args.length != 1) {
+            if (args.length < 1) {
                 syntax(sender);
                 return;
             }
