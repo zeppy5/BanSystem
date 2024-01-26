@@ -28,10 +28,19 @@ public class UnbanCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            String uuid = MojangAPI.getUUID(args[0]);
+            String uuid = null;
+
+            int n = 0;
+            while (uuid == null && n < 3) {
+                uuid = MojangAPI.getUUID(args[0]);
+                n++;
+                if (uuid == null) {
+                    sender.sendMessage(ChatColor.YELLOW + "Failed to fetch player info from Mojang API. Trying again");
+                }
+            }
 
             if (uuid == null) {
-                sender.sendMessage(ChatColor.RED + "Player does not exist!");
+                sender.sendMessage(ChatColor.RED + "Failed to fetch player info from Mojang API three times. Giving up");
                 return;
             }
 

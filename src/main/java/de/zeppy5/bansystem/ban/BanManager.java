@@ -58,10 +58,10 @@ public class BanManager {
         }
     }
 
-    public void expireBan(String uuid) {
+    public void expireBan(String id) {
         try {
-            PreparedStatement st = BanSystem.getInstance().getMySQL().getConnection().prepareStatement("UPDATE bans SET STATUS = 2 WHERE UUID = ? AND STATUS = 0");
-            st.setString(1, uuid);
+            PreparedStatement st = BanSystem.getInstance().getMySQL().getConnection().prepareStatement("UPDATE bans SET STATUS = 2 WHERE ID = ? AND STATUS = 0");
+            st.setString(1, id);
 
             st.executeUpdate();
             st.close();

@@ -23,7 +23,7 @@ public class BanListener implements Listener {
             try {
                 while (rs.next()) {
                     if (((System.currentTimeMillis() / 1000) > rs.getLong("EXPIRES")) && rs.getLong("EXPIRES") != -1) {
-                        BanSystem.getInstance().getBanManager().expireBan(String.valueOf(event.getPlayer().getUniqueId()));
+                        BanSystem.getInstance().getBanManager().expireBan(rs.getString("ID"));
                     } else {
                         String r = reason(rs);
                         event.setKickMessage(r);
