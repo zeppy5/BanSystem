@@ -33,7 +33,7 @@ public class ListBansCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            if (args.length > 2) {
+            if (args.length < 1) {
                 syntax(sender);
                 return;
             }
