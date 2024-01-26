@@ -1,6 +1,6 @@
 # Enter your database details here
 # If the config isn't correct the plugin won't start!
-# Custom ban reason ids can be configured in reasons.yml file
+# Custom ban reason IDs can be configured in reasons.yml file
 
 host: 'localhost'
 database: 'ban'
